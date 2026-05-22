@@ -150,7 +150,7 @@ class _RulesConfigScreenState extends ConsumerState<RulesConfigScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Configure Points Rules')),
+      appBar: AppBar(title: const Text('Configure Points & Rules')),
       body: !_loaded
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -270,15 +270,15 @@ class _RulesConfigScreenState extends ConsumerState<RulesConfigScreen> {
                     ),
                     child: Column(
                       children: [
-                        _bufferField('Fajr Buffer', _fajrBufferCtrl, Icons.wb_twilight_rounded, Colors.teal),
+                        _bufferField('Fajr Extra Time', _fajrBufferCtrl, Icons.wb_twilight_rounded, Colors.teal),
                         const SizedBox(height: 16),
-                        _bufferField('Dhuhr Buffer', _dhuhrBufferCtrl, Icons.wb_sunny_outlined, Colors.teal),
+                        _bufferField('Dhuhr Extra Time', _dhuhrBufferCtrl, Icons.wb_sunny_outlined, Colors.teal),
                         const SizedBox(height: 16),
-                        _bufferField('Asr Buffer', _asrBufferCtrl, Icons.cloud_queue_rounded, Colors.teal),
+                        _bufferField('Asr Extra Time', _asrBufferCtrl, Icons.cloud_queue_rounded, Colors.teal),
                         const SizedBox(height: 16),
-                        _bufferField('Maghrib Buffer', _maghribBufferCtrl, Icons.nights_stay_outlined, Colors.teal),
+                        _bufferField('Maghrib Extra Time', _maghribBufferCtrl, Icons.nights_stay_outlined, Colors.teal),
                         const SizedBox(height: 16),
-                        _bufferField('Isha Buffer', _ishaBufferCtrl, Icons.dark_mode_outlined, Colors.teal),
+                        _bufferField('Isha Extra Time', _ishaBufferCtrl, Icons.dark_mode_outlined, Colors.teal),
                       ],
                     ),
                   ),

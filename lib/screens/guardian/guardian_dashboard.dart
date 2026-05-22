@@ -158,7 +158,7 @@ class GuardianDashboard extends ConsumerWidget {
                   const SizedBox(height: 12),
                   _buildActionCard(
                     context,
-                    title: 'Configure Points Rules',
+                    title: 'Configure Points & Rules',
                     subtitle: 'Set points for each prayer condition',
                     icon: Icons.tune_rounded,
                     color: theme.colorScheme.primary,
