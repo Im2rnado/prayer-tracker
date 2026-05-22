@@ -70,22 +70,50 @@ class _LogPrayerScreenState extends ConsumerState<LogPrayerScreen>
       final logTime = DateTime.now();
       final db = ref.read(databaseProvider);
 
-      // Determine on-time status
+      // Fetch rules from all linked guardians first
+      final List<RulesModel> rulesList = [];
+      if (user.linkedGuardianIds.isNotEmpty) {
+        final fetched = await Future.wait(
+          user.linkedGuardianIds.map((gId) => db.getRules(gId)),
+        );
+        rulesList.addAll(fetched);
+      }
+
+      // Determine if there is a parent-defined dynamic timing buffer for the selected prayer
+      int? resolvedBuffer;
+      if (rulesList.isNotEmpty) {
+        final buffers = rulesList
+            .map((r) {
+              switch (_selectedPrayer) {
+                case 'Fajr': return r.fajrBuffer;
+                case 'Dhuhr': return r.dhuhrBuffer;
+                case 'Asr': return r.asrBuffer;
+                case 'Maghrib': return r.maghribBuffer;
+                case 'Isha': return r.ishaBuffer;
+                default: return null;
+              }
+            })
+            .whereType<int>()
+            .toList();
+
+        if (buffers.isNotEmpty) {
+          resolvedBuffer = (buffers.reduce((a, b) => a + b) / buffers.length).round();
+        }
+      }
+
+      // Determine on-time status using the resolved buffer
       final onTime = ref
           .read(prayerApiServiceProvider)
-          .isOnTime(_selectedPrayer, logTime, timings);
+          .isOnTime(_selectedPrayer, logTime, timings, customBufferMinutes: resolvedBuffer);
       final status = _resolveStatus(onTime, _isJamaah);
 
-      // Fetch rules from all linked guardians and average the points
+      // Calculate total points
       int totalPoints = 0;
-      if (user.linkedGuardianIds.isEmpty) {
+      if (rulesList.isEmpty) {
         // No guardian linked — use default rules
         final defaultRules = RulesModel(guardianId: '');
         totalPoints = _pointsForStatus(status, defaultRules);
       } else {
-        final rulesList = await Future.wait(
-          user.linkedGuardianIds.map((gId) => db.getRules(gId)),
-        );
         final pointsList = rulesList
             .map((rules) => _pointsForStatus(status, rules))
             .toList();

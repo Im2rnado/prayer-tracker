@@ -85,35 +85,45 @@ class PrayerApiService {
 
   /// Determines if [logTime] falls within the waqt al-fadila (preferred time) window
   /// for [prayerName]. Windows are:
-  ///   Fajr    → [Fajr, Sunrise)
-  ///   Dhuhr   → [Dhuhr, Asr)
-  ///   Asr     → [Asr, Maghrib)
-  ///   Maghrib → [Maghrib, Isha)
-  ///   Isha    → [Isha, Midnight)
-  bool isOnTime(String prayerName, DateTime logTime, PrayerTimings timings) {
+  ///   Fajr    → [Fajr, Sunrise) or custom buffer
+  ///   Dhuhr   → [Dhuhr, Asr) or custom buffer
+  ///   Asr     → [Asr, Maghrib) or custom buffer
+  ///   Maghrib → [Maghrib, Isha) or custom buffer
+  ///   Isha    → [Isha, Midnight) or custom buffer
+  bool isOnTime(String prayerName, DateTime logTime, PrayerTimings timings, {int? customBufferMinutes}) {
     DateTime start;
     DateTime end;
 
     switch (prayerName) {
       case 'Fajr':
         start = timings.fajr;
-        end = timings.sunrise;
+        end = customBufferMinutes != null
+            ? start.add(Duration(minutes: customBufferMinutes))
+            : timings.sunrise;
         break;
       case 'Dhuhr':
         start = timings.dhuhr;
-        end = timings.asr;
+        end = customBufferMinutes != null
+            ? start.add(Duration(minutes: customBufferMinutes))
+            : timings.asr;
         break;
       case 'Asr':
         start = timings.asr;
-        end = timings.maghrib;
+        end = customBufferMinutes != null
+            ? start.add(Duration(minutes: customBufferMinutes))
+            : timings.maghrib;
         break;
       case 'Maghrib':
         start = timings.maghrib;
-        end = timings.isha;
+        end = customBufferMinutes != null
+            ? start.add(Duration(minutes: customBufferMinutes))
+            : timings.isha;
         break;
       case 'Isha':
         start = timings.isha;
-        end = timings.midnight;
+        end = customBufferMinutes != null
+            ? start.add(Duration(minutes: customBufferMinutes))
+            : timings.midnight;
         break;
       default:
         return false;
